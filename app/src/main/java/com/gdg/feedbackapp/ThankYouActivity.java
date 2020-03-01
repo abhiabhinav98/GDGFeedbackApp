@@ -1,5 +1,6 @@
 package com.gdg.feedbackapp;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -22,6 +23,8 @@ public class ThankYouActivity extends AppCompatActivity {
     ArrayList<GDGFeedback> gfList;
     FeedbackAdapter fadapter;
     RecyclerView feedbackRCV;
+    SharedPreferences mypref = null;
+    DBHelper db = new DBHelper(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,24 +36,26 @@ public class ThankYouActivity extends AppCompatActivity {
         gfList = new ArrayList<GDGFeedback>();
      //  String name= getIntent().getStringExtra("name");
        //get the object from mainactivity
-       GDGFeedback gf = (GDGFeedback) getIntent().getSerializableExtra("feedback");
+       //GDGFeedback gf = (GDGFeedback) getIntent().getSerializableExtra("feedback");
+
+       mypref = getSharedPreferences("MYPREF", MODE_PRIVATE);
+
+        gfList = db.getAllFeedback();
 
 
 
-        /*GDGFeedback g1 =
-                new GDGFeedback("Sourabh1","studebt",1,"graduate","good",20,true);
-        gfList.add(g1);
+        //gfList.add(gf); // add the object into the list
 
-        GDGFeedback g2 =
-                new GDGFeedback("Sourabh2","studebt",1,"graduate","good",20,true);
-        gfList.add(g2);
+        /*String n = mypref.getString("name", "guest");
+        int a = mypref.getInt("age", 18);
+        String occupation = mypref.getString("occupation", "student");
+        String sug = mypref.getString("suggestion", "Good");
+        int rat = mypref.getInt("rating", 2);
+        String qual = mypref.getString("qualification", "Graduate");
 
-        GDGFeedback g3 =
-                new GDGFeedback("Sourabh3","studebt",1,"graduate","good",20,true);
-        gfList.add(g3);*/
+        GDGFeedback g2 = new GDGFeedback(n, occupation, rat, qual, sug, a, false);
+        gfList.add(g2);*/
 
-
-        gfList.add(gf); // add the object into the list
         fadapter = new FeedbackAdapter(gfList);
         feedbackRCV = (RecyclerView)findViewById(R.id.feedbackRecyclerView);
         feedbackRCV.setLayoutManager(new LinearLayoutManager(getApplicationContext()));

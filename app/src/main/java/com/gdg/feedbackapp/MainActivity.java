@@ -1,6 +1,7 @@
 package com.gdg.feedbackapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +22,7 @@ import android.widget.RatingBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -37,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<GDGFeedback> gList;
     TextView textview;
     RadioGroup mRgAllButtons;
+    SharedPreferences mypref = null;
+    DBHelper dbHelper = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +61,12 @@ public class MainActivity extends AppCompatActivity {
         agreeCB=(CheckBox)findViewById(R.id.consentCB);
         textview=(TextView)findViewById(R.id.ageText);
         final LinearLayout myLayout = (LinearLayout) findViewById(R.id.myLayout);
+
+
+        mypref = getSharedPreferences("settings", MODE_PRIVATE);
+
+        //create object of database helper class
+        dbHelper = new DBHelper(this);
 
         ageSB.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -216,6 +226,22 @@ public class MainActivity extends AppCompatActivity {
             int rating = rb.getProgress();
 
           GDGFeedback gf = new GDGFeedback(name,occupation,rating,qualification,suggestion,age,isAgree);
+          if(dbHelper.insertFeedback(gf)){
+              Toast.makeText(MainActivity.this, "inserted successfully", Toast.LENGTH_SHORT).show();
+          }
+          else{
+              Toast.makeText(MainActivity.this, "failed", Toast.LENGTH_SHORT).show();
+          }
+          SharedPreferences.Editor editor = mypref.edit();
+
+
+          editor.putString("name", name);
+          editor.putString("occupation", occupation);
+          editor.putInt("rating", rating);
+          editor.putString("qualification", qualification);
+          editor.putString("suggestion", suggestion);
+          editor.putInt("age", age);
+          editor.commit();
 
             Intent i = new Intent(MainActivity.this,ThankYouActivity.class);
             i.putExtra("name",nameEdt.getText().toString());
